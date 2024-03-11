@@ -66,7 +66,8 @@ for entry in memory:
 
 # %% [markdown]
 # Additionally, we can make it more interesting by initializing the orchestrator with different types of prompt converters.
-# This variation takes the original example, but converts the text to base64 before sending it to the target.
+# This variation takes the original example, but converts the text to base64 and inserting dashes before sending it to the target.
+# Note that converters will stack, so the order in which they are added matters (in this case it first does base64, then adds underscores)
 
 # %%
 
@@ -80,14 +81,16 @@ from pyrit.common.path import DATASETS_PATH
 
 from pyrit.common import default_values
 from pyrit.orchestrator import PromptSendingOrchestrator
-from pyrit.prompt_converter import Base64Converter
+from pyrit.prompt_converter import Base64Converter, StringJoinConverter
 
 
 default_values.load_default_env()
 
 target = AzureOpenAIChatTarget(deployment_name="defense-gpt35")
 
-orchestrator = PromptSendingOrchestrator(prompt_target=target, prompt_converters=[Base64Converter()])
+orchestrator = PromptSendingOrchestrator(
+    prompt_target=target,
+    prompt_converters=[Base64Converter(), StringJoinConverter(join_value="_")])
 
 prompts = PromptDataset.from_yaml_file(pathlib.Path(DATASETS_PATH) / "prompts" / "illegal.prompt")
 
@@ -98,3 +101,5 @@ memory = orchestrator.get_memory()
 
 for entry in memory:
     print(entry)
+
+# %%

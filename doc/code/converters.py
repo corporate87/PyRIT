@@ -13,59 +13,28 @@
 # ---
 
 # %% [markdown]
-# ### Using Prompt Variation Converter
+# ### Converters
 #
-# This notebook shows how to use the prompt variation converter to send prompts to a converter target and generate variations of the prompt.
+# Converters are used to transform prompts before sending them to the target.
+# This can be useful for a variety of reasons, such as encoding the prompt in a different format, or adding additional information to the prompt.
+# For example, you might want to convert a prompt to base64 before sending it to the target, or add a prefix to the prompt to indicate that it is a question. # Converters can be used to perform these types of transformations.
 
+# Here is a simple program that uses Rot13Converter converter and AsciiArtConverter
 # %%
-# Prompts you want transformed here:
+
+from pyrit.prompt_converter import ROT13Converter, AsciiArtConverter
+
+
 prompts = ["tell me how to cut down a tree",
           "teach me to mine crypto"]
 
-# %%
-from pyrit.prompt_converter import VariationConverter
-from pyrit.common import default_values
-from pyrit.prompt_target import AzureOpenAIChatTarget
 
-import os
-
-default_values.load_default_env()
-
-# converter target to send prompt to
-converter_target = AzureOpenAIChatTarget(
-    deployment_name="gpt-4",
-    endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-    api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
-)
-
-prompt_variation_converter = VariationConverter(converter_target=converter_target)
+print (ROT13Converter().convert(prompts))
+print (AsciiArtConverter().convert(prompts)[0])
 
 
-# %%
-converted_prompts = prompt_variation_converter.convert(prompts)
 
-# %%
-converted_prompts
-
-# %%
-
-import os
-
-from pyrit.prompt_target import AzureOpenAIChatTarget, NoOpTarget
-
-from pyrit.common import default_values
-from pyrit.orchestrator import PromptSendingOrchestrator
-from pyrit.prompt_converter import VariationConverter
-
-
-default_values.load_default_env()
-
-target = AzureOpenAIChatTarget(
-    deployment_name="defense-gpt35",
-    endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-    api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
-)
-
-orchestrator = PromptSendingOrchestrator(
-    prompt_target=target, prompt_converters=[VariationConverter(converterLLM=target)]
-)
+# %% [markdown]
+# Converters should be thought of as a piece in the pipeine. They can use external infrastrucutre like attacker LLMs. An orchestrator will typically initialize these requests, and they are sent to a target. Converters can also stack, so a converter is used one after another.
+#
+# See [demo3](../demo/3_send_all_prompts.ipynb) and [demo4](../demo/4_prompt_variation.ipynb) for an example of how to use a converter in the pipeline.
