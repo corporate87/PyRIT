@@ -4,7 +4,7 @@
 import pytest
 
 from pyrit.prompt_converter import Base64Converter, StringJoinConverter
-from pyrit.prompt_normalizer import Prompt, PromptNormalizer
+from pyrit.prompt_normalizer import PromptRequestPiece, PromptNormalizer
 from pyrit.prompt_converter import PromptConverter
 
 from tests.mocks import MockPromptTarget
@@ -28,7 +28,7 @@ def test_prompt_init_valid_arguments():
     prompt_text = "Hello"
     conversation_id = "123"
 
-    prompt = Prompt(
+    prompt = PromptRequestPiece(
         prompt_target=prompt_target,
         prompt_converters=prompt_converters,
         prompt_text=prompt_text,
@@ -48,7 +48,7 @@ def test_prompt_init_invalid_prompt_target():
     conversation_id = "123"
 
     with pytest.raises(ValueError):
-        Prompt(
+        PromptRequestPiece(
             prompt_target=prompt_target,
             prompt_converters=prompt_converters,
             prompt_text=prompt_text,
@@ -63,7 +63,7 @@ def test_prompt_init_invalid_prompt_converters():
     conversation_id = "123"
 
     with pytest.raises(ValueError):
-        Prompt(
+        PromptRequestPiece(
             prompt_target=prompt_target,
             prompt_converters=prompt_converters,
             prompt_text=prompt_text,
@@ -78,7 +78,7 @@ def test_prompt_init_empty_prompt_converters():
     conversation_id = "123"
 
     with pytest.raises(ValueError):
-        Prompt(
+        PromptRequestPiece(
             prompt_target=prompt_target,
             prompt_converters=prompt_converters,
             prompt_text=prompt_text,
@@ -93,7 +93,7 @@ def test_prompt_init_invalid_prompt_text():
     conversation_id = "123"
 
     with pytest.raises(ValueError):
-        Prompt(
+        PromptRequestPiece(
             prompt_target=prompt_target,
             prompt_converters=prompt_converters,
             prompt_text=prompt_text,
@@ -108,7 +108,7 @@ def test_prompt_init_invalid_conversation_id():
     conversation_id = 123
 
     with pytest.raises(ValueError):
-        Prompt(
+        PromptRequestPiece(
             prompt_target=prompt_target,
             prompt_converters=prompt_converters,
             prompt_text=prompt_text,
@@ -122,7 +122,7 @@ def test_send_prompt_multiple_converters():
     prompt_text = "Hello"
     conversation_id = "123"
 
-    prompt = Prompt(
+    prompt = PromptRequestPiece(
         prompt_target=prompt_target,
         prompt_converters=prompt_converters,
         prompt_text=prompt_text,
@@ -142,7 +142,7 @@ async def test_send_prompt_async_multiple_converters():
     prompt_text = "Hello"
     conversation_id = "123"
 
-    prompt = Prompt(
+    prompt = PromptRequestPiece(
         prompt_target=prompt_target,
         prompt_converters=prompt_converters,
         prompt_text=prompt_text,
@@ -162,7 +162,7 @@ async def test_prompt_normalizer_send_prompt_batch_async():
     prompt_text = "Hello"
     conversation_id = "123"
 
-    prompt = Prompt(
+    prompt = PromptRequestPiece(
         prompt_target=prompt_target,
         prompt_converters=prompt_converters,
         prompt_text=prompt_text,
