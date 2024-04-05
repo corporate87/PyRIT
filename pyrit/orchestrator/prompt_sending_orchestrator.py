@@ -27,7 +27,6 @@ class PromptSendingOrchestrator(Orchestrator):
         prompt_converters: Optional[list[PromptConverter]] = None,
         memory: MemoryInterface = None,
         batch_size: int = 10,
-        include_original_prompts: bool = False,
         verbose: bool = False,
     ) -> None:
         """
@@ -48,46 +47,35 @@ class PromptSendingOrchestrator(Orchestrator):
 
         self._prompt_target = prompt_target
         self._prompt_target._memory = self._memory
-        self._include_original_prompts = include_original_prompts
 
         self.batch_size = batch_size
 
-    def send_prompts(self, prompts: list[str]):
+    def send_prompts(self, prompt_strings: list[str]):
         """
         Sends the prompt to the prompt target.
         """
         responses = []
 
-        normalized_prompts = self._coalesce_prompts(prompts)
+        normalized_prompts = self._get_normalized_prompts(prompt_strings)
 
         for prompt in normalized_prompts:
             responses.append(self._prompt_normalizer.send_prompt(prompt=prompt))
 
         return responses
 
-    async def send_prompts_batch_async(self, prompts: list[str]):
+    async def send_prompts_batch_async(self, prompt_strings: list[str]):
         """
         Sends the prompt to the prompt target.
         """
 
-        normalized_prompts = self._coalesce_prompts(prompts)
+        normalized_prompts = self._get_normalized_prompts(prompt_strings)
 
         await self._prompt_normalizer.send_prompt_batch_async(normalized_prompts, batch_size=self.batch_size)
 
-    def _coalesce_prompts(self, prompts):
+    def _get_normalized_prompts(self, prompts):
         normalized_prompts = []
 
         for prompt_text in prompts:
-            if self._include_original_prompts:
-                original_prompt = Prompt(
-                    prompt_target=self._prompt_target,
-                    prompt_converters=[NoOpConverter()],
-                    prompt_text=prompt_text,
-                    conversation_id=str(uuid4()),
-                )
-
-                normalized_prompts.append(original_prompt)
-
             converted_prompt = Prompt(
                 prompt_target=self._prompt_target,
                 prompt_converters=self._prompt_converters,

@@ -22,7 +22,7 @@ class VariationConverter(PromptConverter):
             prompt_template
             if prompt_template
             else PromptTemplate.from_yaml_file(
-                pathlib.Path(DATASETS_PATH) / "prompt_converters" / "variation_converter.yaml"
+                pathlib.Path(DATASETS_PATH) / "orchestrators" / "prompt_sending" / "variations.yaml"
             )
         )
 

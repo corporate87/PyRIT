@@ -44,7 +44,7 @@ class TranslationConverter(PromptConverter):
 
         self.language = language
 
-        self.system_prompt = prompt_template.apply_custom_metaprompt_parameters(languages=language)
+        self.system_prompt = prompt_template.apply_custom_metaprompt_parameters(language=language)
 
         self._conversation_id = str(uuid.uuid4())
         self._normalizer_id = None  # Normalizer not used
@@ -76,7 +76,7 @@ class TranslationConverter(PromptConverter):
 
         try:
             llm_response: dict[str, str] = json.loads(response_msg)["output"]
-            return llm_response[self.language]
+            return llm_response
 
         except json.JSONDecodeError as e:
             logger.warn(f"Error in LLM response {response_msg}: {e}")
