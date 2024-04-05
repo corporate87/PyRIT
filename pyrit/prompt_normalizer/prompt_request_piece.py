@@ -37,6 +37,6 @@ class PromptRequestPiece(abc.ABC):
         self.metadata = metadata
 
 
-class PromptRequestResponse():    
+class PromptRequestPieces():    
     def __init__(self, request_pieces: list[PromptRequestPiece]):
         self.request_pieces = request_pieces
